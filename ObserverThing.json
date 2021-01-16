@@ -1,0 +1,86 @@
+{
+    "@context": [
+        "https://www.w3.org/2019/wot/td/v1",
+        { "fml40": "www.kwh-example-uri-fml40#" },
+        { "@language": "en" }],
+    "@type": "fml40:ObservierungsGerät",
+    "id": "W&HThingId",
+    "title": "DTThing",
+    "titles": {
+        "en": "W&H-thing",
+        "de": "W&H-ding",
+        "it": "W&H-cosa"
+    },
+    "description": "This is an experimental kwh thing to showcase the possibilities of WoT",
+    "descriptions": {
+        "en": "This is an experimental kwh thing to showcase the possibilities of WoT",
+        "de": "Das ist ein experimentelles Ding mit welchem die Möglichkeiten des WoT gezeigt werden können",
+        "it": "Questa è una cosa sperimentale con cui si possono mostrare le possibilità di WoT"
+    },
+    "support": "git://github.com/eclipse/thingweb.node-wot.git",
+    "securityDefinitions": {
+        "": {
+            "scheme": ""
+        }
+    },
+    "security": "",
+    "properties": {
+        "movement": {
+            "title": "Counting the number of animal movements detected",
+            "description": "This kwh-thing includes a pir motion sensor. This field shows the number of movements which got detected",
+            "unit": "",
+            "type": "integer",
+            "observable": false,
+            "readOnly": true
+        },
+        "lastSnapshot": {
+            "title": "last snapshot taken with camera",
+            "description": "The action takePhoto takes a picture and saves it as lastSnapshot property",
+            "forms": [{
+                "op": "readproperty",
+                "contentType": "image/png"
+            }],
+            "observable": false,
+            "readOnly": true
+        },
+        "location": {
+            "@type": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+            "title": "The coordinates of the device",
+            "titles": {
+                "de": "Koordinaten des Gerätes",
+                "it": "Coordinato del dispositivo"
+            },
+            "description": "These coordinates are showing the current location of the device. They get updated every 20 minutes",
+            "type": "integer",
+            "readOnly": true
+
+        }
+    },
+    "actions": {
+        "takePhoto": {
+            "title": "Takes img with the mounted camera",
+            "description": "On this kwh-thing there is a camera attached and if invoked will take an image",
+            "input": {
+                "type": "object",
+                "testparam": {
+                    "type": "string"
+                }
+            },
+            "forms": [{
+                "op": "invokeaction",
+                "contentType": "application/json"
+            }]
+        }
+    },
+    "events": {
+        "movementDetected": {
+            "@type": "fml40:AnimalMovement",
+            "title": "Trespassing alarm",
+            "description": "Event when subscribed notifies if movement gets detected from the PIR sensor",
+            "data": {
+                "unit": "",
+                "type": "string"
+            }
+        }
+    }
+}

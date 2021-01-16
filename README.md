@@ -20,3 +20,24 @@ This Repo got created to showcase how a TPM 2.0 can enhance the security of a [W
 TSS is an abbrevation for TPM Software Stack and contains a whole set of software stacks to interact with the tpm. Below you can see a visualization:
 
 ![Image of TSS]()
+
+### tpm2-abrmd
+This contains some storage manager tools for the TPM2.0
+
+### tpm2-tools
+Contains commandline tools. This provides the API we are using for our PoC. Tools relies heavily on the tss ESAPI interface.
+
+## Setup
+- Get the newest version of Raspian
+```
+sudo apt-get update && sudo apt-get upgrade
+```
+
+- Adapt boot config to activate TPM
+```
+sudo nano /boot/config.txt
+dtparam=spit=on
+dtoverlay=tpm-slb9670
+sudo reboot
+```
+- 
