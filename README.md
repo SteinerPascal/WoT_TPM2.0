@@ -40,4 +40,52 @@ dtparam=spit=on
 dtoverlay=tpm-slb9670
 sudo reboot
 ```
-- 
+- move tpm2_install.sh script to new folder (it will install the softwarestack in this folder)
+
+```
+sudo bash tpm2_install.sh
+```
+- Create primary key under the owner (SRK) hierarchy (taking sha256 and rsa 2048 as default)
+```
+sudo tpm2_createprimary -C e -c ./primary/primary.ctx
+```
+- Create childkey (sha256 and rsa 2048)
+```
+tpm2_create -G rsa -u ./child/rsa.pub -r ./child/rsa.priv -C ./primary/primary.ctx
+```
+- Load child key into the TPM
+```
+tpm2_load -C ./primary/primary.ctx -u ./child/rsa.pub -r ./child/rsa.priv -c ./load/rsa.ctx
+```
+- openssl create has digest of file (in our case the TD json)
+```
+ openssl dgst -sha256 -binary -out ./openssl/hash.bin ObserverThing.json 
+```
+- alternatively use TPM to create hash
+```
+tpm2_hash -C o -g sha256 -o ./tpmhash/hash.bin -t ./tpmhash/ticket.bin ObserverThing.json
+```
+
+- sign hash with tpm
+```
+tpm2_sign -c ./load/rsa.ctx -g sha256 -o ./tpmhash/sig.rssa ./tpmhash/hash.bin
+or 
+tpm2_sign -c ./load/rsa.ctx -g sha256 -o ./openssl/sig.rssa -f plain ./openssl/hash.bin
+```
+
+- create DER encoded public key
+```
+sudo tpm2_readpublic -c ./load/rsa.ctx -f der -o ./child/pub-rsa.der
+```
+
+- openssl verify
+```
+sudo openssl dgst -verify ./child/pub-rsa.der  -keyform der -sha256 -signature ./openssl/sig.rssa ./openssl/hash.bin
+```
+
+- verify with tpm
+```
+sudo tpm2_verifysignature -c ./load/rsa.ctx -g sha256 -m ./tpmhash/hash.bin -s ./tpmhash/sig.rssa
+```
+
+
